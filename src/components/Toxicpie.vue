@@ -16,23 +16,19 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent, defineProps, watch, toRef, ref, onMounted } from 'vue'
-const toxicBlack = '#10151c'
-const toxicBlue = '#52a8dd'
+<script lang="ts" setup>
+import { toxicBlack, toxicBlue } from '@/utils/color'
 
-export default defineComponent({
-  props: {
-    outline: {
-      require: false,
-      type: String,
-      default: toxicBlack
-    },
-    skin: {
-      require: false,
-      type: String,
-      default: toxicBlue
-    }
+defineProps({
+  outline: {
+    require: false,
+    type: String,
+    default: toxicBlack
+  },
+  skin: {
+    require: false,
+    type: String,
+    default: toxicBlue
   }
 })
 </script>

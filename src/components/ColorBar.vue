@@ -1,11 +1,11 @@
 <template>
   <div class="color-bar">
-    <input ref="input" type="range" min="0" max="1535" :value="modelValue" @change="onChange" @input="onInput" />
+    <input ref="input" type="range" min="0" max="1535" :value="modelValue" @input="onInput" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, toRef } from 'vue'
 import { toRgb } from '@/utils/color'
 import { getColorBarColor } from '@/utils/palette'
 
@@ -19,23 +19,15 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 const input = ref(null as any as HTMLInputElement)
 
-function updateThumbColor(inputVal: number) {
-  input.value.style.color = toRgb(getColorBarColor(inputVal))
-}
-
-function onChange(e: Event) {
-  const input = e.target as HTMLInputElement
-  const inputVal = +input.value
-  emit('update:modelValue', inputVal)
-}
+watch(toRef(props, 'modelValue'), x => {
+  input.value.style.color = toRgb(getColorBarColor(x))
+})
 
 function onInput(e: Event) {
   const input = e.target as HTMLInputElement
   const inputVal = +input.value
-  updateThumbColor(inputVal)
+  emit('update:modelValue', inputVal)
 }
-
-onMounted(() => updateThumbColor(props.modelValue))
 </script>
 
 <style lang="scss">

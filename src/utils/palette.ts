@@ -1,7 +1,4 @@
-import { Ref, watch } from 'vue'
-import { getRgb, toRgb, toxicBlue } from '@/utils/color'
-
-type RGB = [number, number, number]
+import { getRgb, RGB, round } from '@/utils/color'
 
 export function getColorBarColor(x: number): RGB {
   if (x < 256) return [255, x, 0]
@@ -29,14 +26,14 @@ export function getColorBoardColor(
   g = saturation * (g + (255 - g) * brightness)
   b = saturation * (b + (255 - b) * brightness)
   if (rounded) {
-    r = Math.round(r)
-    g = Math.round(g)
-    b = Math.round(b)
+    r = round(r)
+    g = round(g)
+    b = round(b)
   }
   return [r, g, b]
 }
 
-function getColorBarValue(x: RGB): number {
+export function getColorBarValue(x: RGB): number {
   let base = 0
   const [r, g, b] = x
   if (r === 255 && b === 0) return base + g
@@ -53,97 +50,93 @@ function getColorBarValue(x: RGB): number {
   return base + (255 - b)
 }
 
-export default class Palette {
-  constructor(
-    private bar: Ref<number>,
-    private board: Ref<number>,
-    private elBoard: HTMLElement
-  ) {
-    watch(bar, (o) => (elBoard.style.color = toRgb(getColorBarColor(o))))
-  }
+export function getSourceValue(col: string): {
+  bar: number
+  board: number
+} {
+  const [r, g, b] = getRgb(col)
+  let sat, bri, baseR, baseG, baseB
 
-  get color(): string {
-    // const basic = 
-    let [r, g, b] = getRgb(this.elBoard.value)
-    const brightness = (this.board.value >> 8) / 256
-    const saturation = (this.board.value & 0xff) / 256
-    r = Math.round(saturation * (r + (255 - r) * brightness))
-    g = Math.round(saturation * (g + (255 - g) * brightness))
-    b = Math.round(saturation * (b + (255 - b) * brightness))
-    return toRgb([r, g, b])
-  }
-
-  private static _setColor(col: RGB): {
+  function solveEquations(col: RGB): {
     sat: number
     g: number
     bri: number
   } {
-    const [r, g, b] = col
-
-    // assume r <= g <= b
-    if (b === 0) {
+    const [col1, col2, col3] = col
+    // assume col1 <= col2 <= col3
+    if (col3 === 0) {
       // #000000 is black
       return { sat: 0, g: 0, bri: 0 }
-    } else if (b === r) {
+    } else if (col3 === col1) {
       // ## xxxxxx is black/white, this may be any color
-      // return toxic blue :)
-      return { sat: b / 255, g: Palette._setColor(getRgb(toxicBlue)).g, bri: 1 }
+      return { sat: col3 / 255, g: 255, bri: 1 }
     } else {
-      return { sat: b / 255, g: (255 * (g - r)) / (b - r), bri: r / b }
+      return {
+        sat: col3 / 255,
+        g: (255 * (col2 - col1)) / (col3 - col1),
+        bri: col1 / col3
+      }
     }
   }
 
-  set color(value: string) {
-    const [r, g, b] = getRgb(value)
-    let sat, bri, baseR, baseG, baseB
-    if (r <= g && g <= b) {
-      const res = Palette._setColor([r, g, b])
-      sat = res.sat
-      bri = res.bri
-      baseR = 0
-      baseG = Math.floor(res.g)
-      baseB = 255
-    } else if (r <= b && b <= g) {
-      const res = Palette._setColor([r, b, g])
-      sat = res.sat
-      bri = res.bri
-      baseR = 0
-      baseB = Math.floor(res.g)
-      baseG = 255
-    } else if (g <= r && r <= b) {
-      const res = Palette._setColor([g, r, b])
-      sat = res.sat
-      bri = res.bri
-      baseG = 0
-      baseR = Math.floor(res.g)
-      baseB = 255
-    } else if (g <= b && b <= r) {
-      const res = Palette._setColor([g, b, r])
-      sat = res.sat
-      bri = res.bri
-      baseG = 0
-      baseB = Math.floor(res.g)
-      baseR = 255
-    } else if (b <= r && r <= g) {
-      const res = Palette._setColor([b, r, g])
-      sat = res.sat
-      bri = res.bri
-      baseB = 0
-      baseR = Math.floor(res.g)
-      baseG = 255
-    } else {
-      // b <= g && g <= r
-      const res = Palette._setColor([b, g, r])
-      sat = res.sat
-      bri = res.bri
-      baseB = 0
-      baseG = Math.floor(res.g)
-      baseR = 255
-    }
-
-    sat = Math.floor(sat * 256)
-    bri = Math.floor(bri * 256)
-    this.bar.value = getColorBarValue([baseR, baseG, baseB])
-    this.board.value = (bri << 8) | sat
+  if (r <= g && g <= b) {
+    const res = solveEquations([r, g, b])
+    sat = res.sat
+    bri = res.bri
+    baseR = 0
+    baseG = round(res.g)
+    baseB = 255
+  } else if (r <= b && b <= g) {
+    const res = solveEquations([r, b, g])
+    sat = res.sat
+    bri = res.bri
+    baseR = 0
+    baseB = round(res.g)
+    baseG = 255
+  } else if (g <= r && r <= b) {
+    const res = solveEquations([g, r, b])
+    sat = res.sat
+    bri = res.bri
+    baseG = 0
+    baseR = round(res.g)
+    baseB = 255
+  } else if (g <= b && b <= r) {
+    const res = solveEquations([g, b, r])
+    sat = res.sat
+    bri = res.bri
+    baseG = 0
+    baseB = round(res.g)
+    baseR = 255
+  } else if (b <= r && r <= g) {
+    const res = solveEquations([b, r, g])
+    sat = res.sat
+    bri = res.bri
+    baseB = 0
+    baseR = round(res.g)
+    baseG = 255
+  } else {
+    // b <= g && g <= r
+    const res = solveEquations([b, g, r])
+    sat = res.sat
+    bri = res.bri
+    baseB = 0
+    baseG = round(res.g)
+    baseR = 255
   }
+
+  sat = round(sat * 255)
+  bri = round(bri * 255)
+  const bar = getColorBarValue([baseR, baseG, baseB])
+  const board = (bri << 8) | sat
+  return { bar, board }
+}
+
+export function getDestColor(barVal: number, boardVal: number): RGB {
+  let [r, g, b] = getColorBarColor(barVal)
+  const brightness = (boardVal >> 8) / 255
+  const saturation = (boardVal & 0xff) / 255
+  r = round(saturation * (r + (255 - r) * brightness))
+  g = round(saturation * (g + (255 - g) * brightness))
+  b = round(saturation * (b + (255 - b) * brightness))
+  return [r, g, b]
 }

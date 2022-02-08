@@ -1,18 +1,48 @@
 <template>
-  <div class="flex flex-col lg:flex-row container mx-auto px-4">
-    <!-- preview -->
-    <div class="lg:grow">
-      <div class="p-10 rounded shadow-xl flex justify-center items-center lg:h-full">
-        <toxicpie class="h-[160px] sm:h-[210px] md:h-[260px] lg:h-[310px] xl:h-[360px]"></toxicpie>
-      </div>
-    </div>
-    <!-- palette -->
-    <div class="px-4 lg:w-[40%] mt-[2rem] lg:mt-0">
-      <h1 class="text-3xl font-black text-center">Toxicpie Generator</h1>
-    </div>
+  <div ref="root">
+    <color-board v-model="boardVal" class="h-24 mb-2"></color-board>
+    <color-bar v-model="barVal"></color-bar>
   </div>
 </template>
 
 <script lang="ts" setup>
-import Toxicpie from '@/components/Toxicpie.vue'
+import { ref, onMounted, toRef, watch } from 'vue'
+import ColorBoard from '@/components/ColorBoard.vue'
+import ColorBar from '@/components/ColorBar.vue'
+import { getSourceValue, getDestColor, getColorBarColor } from '@/utils/palette'
+import { toRgb, toxicBlue } from '@/utils/color'
+
+const props = defineProps({
+  color: {
+    type: String,
+    default: toxicBlue
+  }
+})
+const emit = defineEmits(['change'])
+const barVal = ref(180)
+const boardVal = ref(255)
+
+const root = ref(null as any as HTMLElement)
+function updateBoardBasicColor(bar: number = barVal.value) {
+  const colorStr = toRgb(getColorBarColor(bar))
+  const elBoard = root.value.firstChild as HTMLElement
+  elBoard.style.background = `linear-gradient(transparent, black), linear-gradient(90deg, white, ${colorStr})`
+}
+
+function updateColor(value: string = props.color) {
+  const res = getSourceValue(value)
+  barVal.value = res.bar
+  boardVal.value = res.board
+}
+
+watch(toRef(props, 'color'), updateColor)
+watch(barVal, value => {
+  updateBoardBasicColor(value)
+  emit('change', toRgb(getDestColor(value, boardVal.value)))
+})
+watch(boardVal, value => {
+  emit('change', toRgb(getDestColor(barVal.value, value)))
+})
+
+onMounted(() => updateColor())
 </script>
