@@ -1,4 +1,4 @@
-import { getRgb, RGB, round } from '@/utils/color'
+import { getRgb, RGB, round, toxicBlue } from '@/utils/color'
 
 export function getColorBarColor(x: number): RGB {
   if (x < 256) return [255, x, 0]
@@ -56,6 +56,14 @@ export function getSourceValue(col: string): {
 } {
   const [r, g, b] = getRgb(col)
   let sat, bri, baseR, baseG, baseB
+
+  // special judge
+  if (r === g && g === b) {
+    return {
+      bar: getSourceValue(toxicBlue).bar,
+      board: (0xff << 8) | r
+    }
+  }
 
   function solveEquations(col: RGB): {
     sat: number
