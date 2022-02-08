@@ -18,7 +18,9 @@ const props = defineProps({
     default: toxicBlue
   }
 })
-const emit = defineEmits(['change'])
+const emit = defineEmits<{
+  (eventName: 'change', source: EventTarget, value: string): any
+}>()
 const barVal = ref(180)
 const boardVal = ref(255)
 
@@ -38,11 +40,13 @@ function updateColor(value: string = props.color) {
 watch(toRef(props, 'color'), updateColor)
 watch(barVal, value => {
   updateBoardBasicColor(value)
-  emit('change', toRgb(getDestColor(value, boardVal.value)))
+  emit('change', root.value, toRgb(getDestColor(value, boardVal.value)))
 })
 watch(boardVal, value => {
-  emit('change', toRgb(getDestColor(barVal.value, value)))
+  emit('change', root.value, toRgb(getDestColor(barVal.value, value)))
 })
 
-onMounted(() => updateColor())
+onMounted(() => {
+  updateColor()
+})
 </script>
