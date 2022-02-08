@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="relative" @mousedown="trackFlag = true" @click="update">
+  <div ref="root" class="relative" @mousedown="trackFlag = true" @click="update" @touchmove="update">
     <div class="absolute h-[12px] w-[12px] rounded-full border-white border" :style="{ right: briStyle, bottom: satStyle }"></div>
   </div>
 </template>
@@ -27,10 +27,17 @@ const satStyle = computed(() => {
 const root = ref(null as any as HTMLDivElement)
 
 const trackFlag = ref(false)
-function update(e: MouseEvent) {
+function update(e: MouseEvent | TouchEvent) {
   const rect = root.value.getBoundingClientRect();
-  const x = e.clientX - rect.left; // x position within the element.
-  const y = e.clientY - rect.top;  // y position within the element.
+  let x, y
+  if (e instanceof MouseEvent) {
+    x = e.clientX - rect.left; // x position within the element.
+    y = e.clientY - rect.top;  // y position within the element.
+  }
+  else {
+    x = e.changedTouches[0].clientX - rect.left
+    y = e.changedTouches[0].clientY - rect.top
+  }
   const b = round(255 * (rect.width - x) / rect.width)
   const s = round(255 * (rect.height - y) / rect.height)
   emit('update:modelValue', b << 8 | s)
