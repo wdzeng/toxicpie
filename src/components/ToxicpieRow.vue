@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="grid grid-cols-[repeat(12,minmax(0,1fr))] lg:grid-cols-[repeat(20,minmax(0,1fr))] xl:grid-cols-[repeat(28,minmax(0,1fr))]">
-      <div v-for="_ in 12 * row" class="p-[4%]">
+    <div class="grid grid-cols-[repeat(16,minmax(0,1fr))] lg:grid-cols-[repeat(20,minmax(0,1fr))] xl:grid-cols-[repeat(28,minmax(0,1fr))]">
+      <div v-for="_ in 16 * row" class="p-[4%]">
         <toxicpie></toxicpie>
       </div>
-      <div v-for="_ in 8 * row" class="p-[4%] hidden lg:block">
+      <div v-for="_ in 4 * row" class="p-[4%] hidden lg:block">
         <toxicpie></toxicpie>
       </div>
       <div v-for="_ in 8 * row" class="p-[4%] hidden xl:block">
