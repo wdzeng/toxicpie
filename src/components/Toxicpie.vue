@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineProps, watch, toRef, ref, onMounted } from "vue"
+import { defineComponent, defineProps, watch, toRef, ref, onMounted } from 'vue'
 const toxicBlack = '#10151c'
 const toxicBlue = '#52a8dd'
 
