@@ -1,0 +1,42 @@
+# This is a basic workflow to help you get started with Actions
+name: deploy
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch: ~
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      COMMIT_EMAIL: bot@hyperbola.me
+      COMMIT_NAME: robot
+      ACCESS_TOKEN: ${{ secrets.BOT_CI }}
+      USERNAME: wdzeng
+      REPONAME: toxicpie
+      TARGET_BRANCH: gh-pages
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: |
+            yarn install --frozen-lockfile
+            yarn build
+            cd dist
+            ln -s index.html 404.html
+            git init
+            git config user.email ${{ env.COMMIT_EMAIL }}
+            git config user.name ${{ env.COMMIT_NAME }}
+            git add -A
+            git commit -m deploy
+            git push -f https://${{ env.ACCESS_TOKEN }}@github.com/${{ env.USERNAME }}/${{ env.REPONAME }}.git master:${{ env.TARGET_BRANCH }}
+      shell: bash
