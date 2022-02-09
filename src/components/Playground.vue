@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col lg:flex-row container mx-auto px-4">
     <!-- preview -->
-    <div class="p-8 rounded shadow-xl flex justify-center items-center lg:h-full aspect-[4/3] md:aspect-auto lg:aspect-[1/1]" :style="{ background: bgColor }">
+    <div class="p-8 rounded shadow-xl flex justify-center items-center lg:h-full aspect-[4/3] lg:aspect-[3/4] xl:aspect-[1/1]" :style="{ background: bgColor }">
       <toxicpie class="h-[160px] sm:h-[210px] lg:h-[310px] xl:h-[360px]" :skin="skinColor" :outline="outlineColor"></toxicpie>
     </div>
     <!-- control -->
