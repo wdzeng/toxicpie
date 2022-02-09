@@ -2,8 +2,8 @@
   "name": "toxicpie",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "dev": "NODE_ENV=development vite",
+    "build": "NODE_ENV=production vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
