@@ -1,5 +1,5 @@
 <template>
-  <div ref="root" class="relative" @mousedown="trackFlag = true" @click="update" @touchmove="update">
+  <div ref="root" class="relative" @mousedown="trackFlag = true" @click="update" @touchmove="update" @touchstart="update">
     <div class="absolute h-[12px] w-[12px] rounded-full border-white border" :style="{ right: briStyle, bottom: satStyle }"></div>
   </div>
 </template>
