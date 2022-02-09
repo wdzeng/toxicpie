@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       COMMIT_EMAIL: bot@hyperbola.me
-      COMMIT_NAME: robot
+      COMMIT_NAME: fzhongdog
       ACCESS_TOKEN: ${{ secrets.BOT_CI }}
       USERNAME: wdzeng
       REPONAME: toxicpie
