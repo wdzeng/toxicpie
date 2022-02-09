@@ -35,7 +35,7 @@
         <div class="bg-pink-400" @click="onBlockClicked"></div>
         <div class="bg-pink-500" @click="onBlockClicked"></div>
         <div class="bg-pink-600" @click="onBlockClicked"></div>
-        <div class="bg-white"></div>
+        <div class="bg-white" @click="onBlockClicked"></div>
         <div class="bg-neutral-300" @click="onBlockClicked"></div>
         <div class="bg-neutral-400" @click="onBlockClicked"></div>
         <div class="bg-neutral-500" @click="onBlockClicked"></div>
