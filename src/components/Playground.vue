@@ -49,7 +49,7 @@
 
     <div class="fixed left-[-256px]">
       <div class="p-[32px] w-[256px] h-[256px] flex justify-center items-center" :style="{ background: bgColor }" id="toxicpie-model">
-        <toxicpie :skin="skinColor" :outline="outlineColor"></toxicpie>
+        <toxicpie :skin="skinColor" :outline="outlineColor" class="max-h-full max-w-full"></toxicpie>
       </div>
     </div>
   </div>
