@@ -88,8 +88,13 @@ async function download(option: number) {
     width: 256,
     height: 256
   })
-  wrapper.innerHTML = '' // remove all child
-  wrapper.appendChild(canvas)
+  const src = canvas.toDataURL("image/png");
+  const img = document.createElement('img')
+  img.src = src
+  img.onload = () => {
+    wrapper.innerHTML = ''
+    wrapper.append(img)
+  }
 }
 </script>
 
